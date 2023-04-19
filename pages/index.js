@@ -3,38 +3,6 @@ import { SignedIn, SignedOut } from "@clerk/nextjs";
 import React from "react";
 import Link from "next/link";
 
-const ClerkFeatures = () => (
-  <Link href="/user">
-    <a className={styles.cardContent}>
-      <img alt="Explore Clerk components" src="/icons/layout.svg" />
-      <div>
-        <h3>Explore features provided by Clerk</h3>
-        <p>Interact with the user button, user profile, and more to preview what your users will see</p>
-      </div>
-      <div className={styles.arrow}>
-        <img src="/icons/arrow-right.svg" />
-      </div>
-    </a>
-  </Link>
-);
-
-const SSRDemoLink = () => (
-  <Link href="/ssr-demo">
-    <a className={styles.cardContent}>
-      <img alt="SSR demo" src="/icons/sparkles.svg" />
-      <div>
-        <h3>Visit the SSR demo page</h3>
-        <p>
-          See how Clerk hydrates the auth state during SSR and CSR, enabling server-side generation even for
-          authenticated pages
-        </p>
-      </div>
-      <div className={styles.arrow}>
-        <img src="/icons/arrow-right.svg" />
-      </div>
-    </a>
-  </Link>
-);
 
 const SignupLink = () => (
   <Link href="/sign-up">
@@ -51,18 +19,7 @@ const SignupLink = () => (
   </Link>
 );
 
-const apiSample = `
-import { getAuth } from "@clerk/nextjs/server";
 
-export default function handler(req, res) {
-  const { sessionId, userId } = getAuth(req);
-
-  if (!sessionId) {
-    return res.status(401).json({ id: null });
-  }
-  return res.status(200).json({ id: userId });
-};
-`.trim();
 
 // Main component using <SignedIn> and <SignedOut>.
 //
@@ -81,52 +38,19 @@ const Main = () => (
     </SignedOut>
 
     <div className={styles.cards}>
-      <SignedIn>
-        <div className={styles.card}>
-          <SSRDemoLink />
-        </div>
-        <div className={styles.card}>
-          <ClerkFeatures />
-        </div>
-      </SignedIn>
       <SignedOut>
         <div className={styles.card}>
           <SignupLink />
         </div>
       </SignedOut>
 
-      <div className={styles.card}>
-        <Link href="https://dashboard.clerk.dev/last-active?utm_source=github&utm_medium=starter_repos&utm_campaign=nextjs_starter">
-          <a target="_blank" rel="noopener" className={styles.cardContent}>
-            <img src="/icons/settings.svg" />
-            <div>
-              <h3>Configure settings for your app</h3>
-              <p>Visit Clerk to manage instances and configure settings for user management, theme, and more</p>
-            </div>
-            <div className={styles.arrow}>
-              <img src="/icons/arrow-right.svg" />
-            </div>
-          </a>
-        </Link>
-      </div>
     </div>
 
     <SignedIn>
       <APIRequest />
     </SignedIn>
 
-    <div className={styles.links}>
-      <Link href="https://clerk.dev/docs?utm_source=github&utm_medium=starter_repos&utm_campaign=nextjs_starter">
-        <a target="_blank" rel="noopener" className={styles.link}>
-          <span className={styles.linkText}>Read Clerk documentation</span>
-        </a>
-      </Link>
-      <Link href="https://nextjs.org/docs">
-        <a target="_blank" rel="noopener" className={styles.link}>
-          <span className={styles.linkText}>Read NextJS documentation</span>
-        </a>
-      </Link>
-    </div>
+   
   </main>
 );
 
@@ -141,7 +65,7 @@ const APIRequest = () => {
     setResponse("// Loading...");
 
     try {
-      const res = await fetch("/api/getAuthenticatedUserId");
+      const res = await fetch("/api/getToken");
       const body = await res.json();
       setResponse(JSON.stringify(body, null, "  "));
     } catch (e) {
@@ -150,13 +74,12 @@ const APIRequest = () => {
   };
   return (
     <div className={styles.backend}>
-      <h2>API request example</h2>
       <div className={styles.card}>
         <button target="_blank" rel="noopener" className={styles.cardContent} onClick={() => makeRequest()}>
           <img src="/icons/server.svg" />
           <div>
-            <h3>fetch('/api/getAuthenticatedUserId')</h3>
-            <p>Retrieve the user ID of the signed in user, or null if there is no user</p>
+            <h3>fetch('/api/getToken')</h3>
+            <p>Retrieve the token of the signed in user, or null if there is no user</p>
           </div>
           <div className={styles.arrow}>
             <img src="/icons/download.svg" />
@@ -173,10 +96,7 @@ const APIRequest = () => {
       <pre>
         <code className="language-js">{response}</code>
       </pre>
-      <h4>pages/api/getAuthenticatedUserId.js</h4>
-      <pre>
-        <code className="language-js">{apiSample}</code>
-      </pre>
+      <h4>pages/api/getToken.js</h4>
     </div>
   );
 };
